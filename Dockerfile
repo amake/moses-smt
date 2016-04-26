@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -q -y build-essential \
     wget \
     zlib1g-dev \
     python-dev \
-    libbz2-dev
+    libbz2-dev \
+    python-pip
 
 RUN git clone https://github.com/moses-smt/mosesdecoder.git \
     && cd mosesdecoder \
@@ -22,3 +23,12 @@ RUN git clone https://github.com/moses-smt/giza-pp.git \
     && mkdir tools \
     && cp /giza-pp/GIZA++-v2/GIZA++ /giza-pp/GIZA++-v2/snt2cooc.out \
        /giza-pp/mkcls-v2/mkcls tools
+
+RUN pip install git+https://github.com/amake/tmx2corpus.git
+
+COPY train.sh /
+COPY tmx /tmx
+
+ENV SOURCE_LANG ja
+ENV TARGET_LANG en
+RUN /bin/bash train.sh
