@@ -36,3 +36,8 @@ COPY train.sh /
 COPY train /train
 ENV TRAIN_TMX_DIR /train
 RUN /train.sh
+
+COPY tune.sh /
+COPY tune /tune
+ENV TUNE_TMX_DIR /tune
+RUN /tune.sh
