@@ -78,3 +78,8 @@ USER moses
 
 RUN $DATA_HOME/binarize.sh
 
+ARG port=80
+EXPOSE $port
+CMD ["--server-port", "${port}"]
+ENTRYPOINT ["/mosesdecoder/bin/mosesserver",
+           "-f", "${WORKING_DIR}/binary/moses.ini"]
