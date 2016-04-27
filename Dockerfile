@@ -19,11 +19,11 @@ RUN git clone https://github.com/moses-smt/mosesdecoder.git \
 RUN git clone https://github.com/moses-smt/giza-pp.git \
     && cd giza-pp \
     && make \
-    && cd /mosesdecoder \
-    && mkdir tools \
-    && cp /giza-pp/GIZA++-v2/GIZA++ /giza-pp/GIZA++-v2/snt2cooc.out \
-       /giza-pp/mkcls-v2/mkcls tools
+    && mkdir /mosesdecoder/tools \
+    && cp GIZA++-v2/GIZA++ GIZA++-v2/snt2cooc.out mkcls-v2/mkcls \
+       /mosesdecoder/tools
 
+ENV MOSES_TOOLS /mosesdecoder/tools
 RUN pip install git+https://github.com/amake/tmx2corpus.git
 
 COPY train.sh /

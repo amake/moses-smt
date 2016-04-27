@@ -48,7 +48,7 @@ mkdir ${WORKING_DIR}/train
 	-corpus ${WORKING_DIR}/corpus/bitext.clean \
 	-f ${SOURCE_LANG} -e ${TARGET_LANG} -alignment grow-diag-final-and -reordering msd-bidirectional-fe \
 	-lm 0:3:${WORKING_DIR}/lm/bitext.blm.${TARGET_LANG}:8 \
-	-external-bin-dir /mosesdecoder/tools -cores $(nproc) > ${WORKING_DIR}/train/training.out
+	-external-bin-dir ${MOSES_TOOLS} -cores $(nproc) > ${WORKING_DIR}/train/training.out
 
 if [ "${TARGET_LANG}" = "ja" ] || [ "${TARGET_LANG}" = "zh" ] || \
 	[ "${SOURCE_LANG}" = "ja" ] || [ "${SOURCE_LANG}" = "zh" ]; then
