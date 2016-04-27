@@ -15,7 +15,7 @@ ${MOSES_HOME}/mosesdecoder/bin/processLexicalTableMin \
 ESC_PATH=$(echo ${WORK_HOME}/binary/ | sed -e 's/\//\\\//g')
 
 sed -r -e 's/(PhraseDictionary)Memory/\1Compact/' \
-	-e "s/(path=).*phrase-table\.gz/\1${ESC_PATH}phrase-table/" \
+	-e "s/(path=).*phrase-table\.gz/\1${ESC_PATH}phrase-table.minphr/" \
 	-e "s/(path=).*reordering-table.*\.gz/\1${ESC_PATH}reordering-table/" \
 	< ${WORK_HOME}/tune/mert-work/moses.ini \
 	> ${WORK_HOME}/binary/moses.ini
