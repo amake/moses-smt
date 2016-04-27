@@ -80,6 +80,6 @@ RUN $DATA_HOME/binarize.sh
 
 ARG port=8080
 EXPOSE $port
-CMD ["--server-port", "${port}"]
-ENTRYPOINT ["/mosesdecoder/bin/mosesserver",
-           "-f", "${WORKING_DIR}/binary/moses.ini"]
+CMD ${MOSES_HOME}/mosesdecoder/bin/mosesserver \
+    -f ${WORK_HOME}/binary/moses.ini \
+    --server-port $port
