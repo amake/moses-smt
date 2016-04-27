@@ -28,9 +28,11 @@ ENV LD_LIBRARY_PATH /mosesdecoder/opt/lib
 
 RUN pip install git+https://github.com/amake/tmx2corpus.git
 
-COPY train.sh /
-COPY tmx /tmx
-
 ENV SOURCE_LANG ja
 ENV TARGET_LANG en
-RUN /bin/bash train.sh
+ENV WORKING_DIR /machinetranslation-${SOURCE_LANG}-${TARGET_LANG}
+
+COPY train.sh /
+COPY train /train
+ENV TRAIN_TMX_DIR /train
+RUN /train.sh
