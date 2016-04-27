@@ -41,3 +41,7 @@ COPY tune.sh /
 COPY tune /tune
 ENV TUNE_TMX_DIR /tune
 RUN /tune.sh
+
+COPY binarize.sh /
+RUN /binarize.sh
+
