@@ -24,6 +24,8 @@ RUN git clone https://github.com/moses-smt/giza-pp.git \
        /mosesdecoder/tools
 
 ENV MOSES_TOOLS /mosesdecoder/tools
+ENV LD_LIBRARY_PATH /mosesdecoder/opt/lib
+
 RUN pip install git+https://github.com/amake/tmx2corpus.git
 
 COPY train.sh /
