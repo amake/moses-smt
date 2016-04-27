@@ -26,12 +26,12 @@ USER moses
 
 # Build uses multiple cores if available, but this requires
 # extra RAM (4 cores: 2 GB)
-RUN git clone https://github.com/moses-smt/mosesdecoder.git \
+RUN git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake \
     && ./compile.sh
 
-RUN git clone https://github.com/moses-smt/giza-pp.git \
+RUN git clone --depth 1 https://github.com/moses-smt/giza-pp.git \
     && cd giza-pp \
     && make \
     && mkdir $MOSES_HOME/mosesdecoder/tools \
