@@ -85,5 +85,5 @@ USER moses
 RUN $DATA_HOME/binarize.sh
 
 EXPOSE 8080
-CMD ${MOSES_HOME}/bin/mosesserver \
+CMD exec ${MOSES_HOME}/bin/mosesserver \
     -f ${WORK_HOME}/binary/moses.ini
