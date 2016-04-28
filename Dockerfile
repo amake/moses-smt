@@ -26,24 +26,29 @@ USER moses
 
 # Build uses multiple cores if available, but this requires
 # extra RAM (4 cores: 2 GB)
-RUN git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
+RUN git clone --depth 1 https://github.com/amake/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake \
-    && ./compile.sh
+       PREFIX=${MOSES_HOME}/opt \
+    && OPT=${MOSES_HOME}/opt ./compile.sh --prefix=${MOSES_HOME}/moses \
+       --install-scripts \
+    && cd - \
+    && rm -rf mosesdecoder
 
 RUN git clone --depth 1 https://github.com/moses-smt/giza-pp.git \
     && cd giza-pp \
     && make \
-    && mkdir $MOSES_HOME/mosesdecoder/tools \
+    && mkdir $MOSES_HOME/tools \
     && cp GIZA++-v2/GIZA++ GIZA++-v2/snt2cooc.out mkcls-v2/mkcls \
-       $MOSES_HOME/mosesdecoder/tools
+       $MOSES_HOME/tools \
+    && cd - \
+    && rm -rf giza-pp
 
 RUN pip install --user git+https://github.com/amake/tmx2corpus.git
 
 ENV PATH $HOME/.local/bin:$PATH
 
-ENV MOSES_TOOLS $MOSES_HOME/mosesdecoder/tools
-ENV LD_LIBRARY_PATH $MOSES_HOME/mosesdecoder/opt/lib
+ENV LD_LIBRARY_PATH $MOSES_HOME/opt/lib
 
 ARG source
 ARG target
@@ -80,6 +85,6 @@ RUN $DATA_HOME/binarize.sh
 
 ARG port=8080
 EXPOSE $port
-CMD ${MOSES_HOME}/mosesdecoder/bin/mosesserver \
+CMD ${MOSES_HOME}/moses/bin/mosesserver \
     -f ${WORK_HOME}/binary/moses.ini \
     --server-port $port
