@@ -12,18 +12,18 @@ cd ${WORK_HOME}/tune
 tmx2corpus ${TUNE_TMX_DIR}
 
 # # Tokenize
-# ${MOSES_HOME}/mosesdecoder/scripts/tokenizer/tokenizer.perl -l ${SOURCE_LANG} \
+# ${MOSES_HOME}/scripts/tokenizer/tokenizer.perl -l ${SOURCE_LANG} \
 # 	< ${DATA_HOME}/tune/bitext.${SOURCE_LANG} \
 # 	> ${DATA_HOME}/tune/bitext.tok.${SOURCE_LANG}
-# ${MOSES_HOME}/mosesdecoder/scripts/tokenizer/tokenizer.perl -l ${TARGET_LANG} \
+# ${MOSES_HOME}/scripts/tokenizer/tokenizer.perl -l ${TARGET_LANG} \
 # 	< ${DATA_HOME}/tune/bitext.${TARGET_LANG} \
 # 	> ${DATA_HOME}/tune/bitext.tok.${TARGET_LANG}
 
 # Tune
-${MOSES_HOME}/mosesdecoder/scripts/training/mert-moses.pl \
+${MOSES_HOME}/scripts/training/mert-moses.pl \
 	${WORK_HOME}/tune/bitext.tok.${SOURCE_LANG} \
     ${WORK_HOME}/tune/bitext.tok.${TARGET_LANG} \
-	${MOSES_HOME}/mosesdecoder/bin/moses ${WORK_HOME}/train/model/moses.ini \
-    --mertdir ${MOSES_HOME}/mosesdecoder/bin/ \
+	${MOSES_HOME}/bin/moses ${WORK_HOME}/train/model/moses.ini \
+    --mertdir ${MOSES_HOME}/bin/ \
 	--decoder-flags="-threads $(nproc)" > mert.out
 

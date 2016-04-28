@@ -4,10 +4,10 @@ set -e
 
 mkdir -p ${WORK_HOME}/binary
 
-${MOSES_HOME}/mosesdecoder/bin/processPhraseTableMin \
+${MOSES_HOME}/bin/processPhraseTableMin \
 	-in ${WORK_HOME}/train/model/phrase-table.gz -nscores 4 \
     -out ${WORK_HOME}/binary/phrase-table
-${MOSES_HOME}/mosesdecoder/bin/processLexicalTableMin \
+${MOSES_HOME}/bin/processLexicalTableMin \
 	-in ${WORK_HOME}/train/model/reordering-table.wbe-msd-bidirectional-fe.gz \
 	-out ${WORK_HOME}/binary/reordering-table
 

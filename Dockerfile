@@ -15,7 +15,8 @@ RUN useradd --user-group --create-home --shell /bin/false moses
 
 ENV HOME=/home/moses
 
-ENV MOSES_HOME=$HOME/bin
+ENV BIN_HOME=$HOME/bin
+ENV MOSES_HOME=$BIN_HOME/moses
 ENV DATA_HOME=$HOME/data
 ENV WORK_HOME=$HOME/work
 
@@ -29,8 +30,8 @@ USER moses
 RUN git clone --depth 1 https://github.com/amake/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake \
-       PREFIX=${MOSES_HOME}/opt \
-    && OPT=${MOSES_HOME}/opt ./compile.sh --prefix=${MOSES_HOME}/moses \
+       PREFIX=${BIN_HOME}/opt \
+    && OPT=${BIN_HOME}/opt ./compile.sh --prefix=${MOSES_HOME} \
        --install-scripts \
     && cd - \
     && rm -rf mosesdecoder
@@ -38,9 +39,9 @@ RUN git clone --depth 1 https://github.com/amake/mosesdecoder.git \
 RUN git clone --depth 1 https://github.com/moses-smt/giza-pp.git \
     && cd giza-pp \
     && make \
-    && mkdir $MOSES_HOME/tools \
+    && mkdir ${BIN_HOME}/tools \
     && cp GIZA++-v2/GIZA++ GIZA++-v2/snt2cooc.out mkcls-v2/mkcls \
-       $MOSES_HOME/tools \
+       ${BIN_HOME}/tools \
     && cd - \
     && rm -rf giza-pp
 
@@ -48,7 +49,7 @@ RUN pip install --user git+https://github.com/amake/tmx2corpus.git
 
 ENV PATH $HOME/.local/bin:$PATH
 
-ENV LD_LIBRARY_PATH $MOSES_HOME/opt/lib
+ENV LD_LIBRARY_PATH $BIN_HOME/opt/lib
 
 ARG source
 ARG target
@@ -85,6 +86,6 @@ RUN $DATA_HOME/binarize.sh
 
 ARG port=8080
 EXPOSE $port
-CMD ${MOSES_HOME}/moses/bin/mosesserver \
+CMD ${MOSES_HOME}/bin/mosesserver \
     -f ${WORK_HOME}/binary/moses.ini \
     --server-port $port
