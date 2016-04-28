@@ -84,8 +84,6 @@ USER moses
 
 RUN $DATA_HOME/binarize.sh
 
-ARG port=8080
-EXPOSE $port
+EXPOSE 8080
 CMD ${MOSES_HOME}/bin/mosesserver \
-    -f ${WORK_HOME}/binary/moses.ini \
-    --server-port $port
+    -f ${WORK_HOME}/binary/moses.ini
