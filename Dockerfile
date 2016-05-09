@@ -27,7 +27,7 @@ USER moses
 
 # Build uses multiple cores if available, but this requires
 # extra RAM (4 cores: 2 GB)
-RUN git clone --depth 1 https://github.com/amake/mosesdecoder.git \
+RUN git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake \
        PREFIX=${BIN_HOME}/opt \
