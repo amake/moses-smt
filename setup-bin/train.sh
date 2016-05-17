@@ -7,22 +7,12 @@ if [ -z "${SOURCE_LANG}" ] || [ -z "${TARGET_LANG}" ]; then
     exit 1
 fi
 
-# Generate corpus
 mkdir -p ${WORK_HOME}/corpus
 cd ${WORK_HOME}/corpus
-tmx2corpus ${TRAIN_TMX_DIR}
-
-# # Tokenize
-# ${MOSES_HOME}/scripts/tokenizer/tokenizer.perl -l ${SOURCE_LANG} \
-# 	< ${WORK_HOME}/corpus/bitext.${SOURCE_LANG} \
-# 	> ${WORK_HOME}/corpus/bitext.tok.${SOURCE_LANG}
-# ${MOSES_HOME}/scripts/tokenizer/tokenizer.perl -l ${TARGET_LANG} \
-# 	< ${WORK_HOME}/corpus/bitext.${TARGET_LANG} \
-# 	> ${WORK_HOME}/corpus/bitext.tok.${TARGET_LANG}
 
 # Clean
 ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
-	${WORK_HOME}/corpus/bitext.tok ${TARGET_LANG} ${SOURCE_LANG} \
+	${DATA_HOME}/train/bitext.tok ${TARGET_LANG} ${SOURCE_LANG} \
 	${WORK_HOME}/corpus/bitext.clean 1 80
 
 # Make language model
