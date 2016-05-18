@@ -1,8 +1,7 @@
-#!/bin/sh
-
-set -e
+#!/bin/bash -exu
 
 mkdir -p ${WORK_HOME}/binary
+cd ${WORK_HOME}/binary
 
 ${MOSES_HOME}/bin/processPhraseTableMin \
 	-in ${WORK_HOME}/train/model/phrase-table.gz -nscores 4 \

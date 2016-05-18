@@ -1,11 +1,4 @@
-#!/bin/sh
-
-set -e
-
-if [ -z "${SOURCE_LANG}" ] || [ -z "${TARGET_LANG}" ]; then
-    echo "The source and target languages must be set!"
-    exit 1
-fi
+#!/bin/bash -exu
 
 mkdir -p ${WORK_HOME}/tune
 cd ${WORK_HOME}/tune

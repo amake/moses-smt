@@ -1,11 +1,4 @@
-#!/bin/sh
-
-set -e
-
-if [ -z "${SOURCE_LANG}" ] || [ -z "${TARGET_LANG}" ]; then
-    echo "The source and target languages must be set!"
-    exit 1
-fi
+#!/bin/bash -exu
 
 mkdir -p ${WORK_HOME}/corpus
 cd ${WORK_HOME}/corpus
@@ -17,6 +10,7 @@ ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
 
 # Make language model
 mkdir ${WORK_HOME}/lm
+cd ${WORK_HOME}/lm
 ${MOSES_HOME}/bin/lmplz -o 3 \
              < ${WORK_HOME}/corpus/bitext.clean.${TARGET_LANG} \
              > ${WORK_HOME}/lm/bitext.arpa.${TARGET_LANG}
@@ -26,6 +20,7 @@ ${MOSES_HOME}/bin/build_binary \
 
 # Train
 mkdir ${WORK_HOME}/train
+cd ${WORK_HOME}/train
 ${MOSES_HOME}/scripts/training/train-model.perl -root-dir ${WORK_HOME}/train \
 	-corpus ${WORK_HOME}/corpus/bitext.clean \
 	-f ${SOURCE_LANG} -e ${TARGET_LANG} -alignment grow-diag-final-and -reordering msd-bidirectional-fe \
