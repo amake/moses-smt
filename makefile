@@ -1,14 +1,22 @@
 PORT=8080
 LABEL=trained
 TAG=moses-$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
+HELLO_WORLD=/bin/sh -c 'echo foo |\
+		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 TEST_MODE=
 
-.PHONY: run runExisting train langs moses clean
+.PHONY: run justRun server justServer train langs moses clean
 
 run: langs train
+	docker run $(TAG) $(HELLO_WORLD)
+
+justRun: langs
+	docker run $(TAG) $(HELLO_WORLD)
+
+server: langs train
 	docker run -p $(PORT):8080 $(TAG)
 
-runExisting: langs
+justServer: langs
 	docker run -p $(PORT):8080 $(TAG)
 
 train: langs moses train-corpus tune-corpus
