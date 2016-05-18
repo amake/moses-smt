@@ -19,7 +19,7 @@ USER moses
 RUN $DATA_HOME/train.sh \
     && $DATA_HOME/tune.sh \
     && $DATA_HOME/binarize.sh \
-    && rm -rf $WORK_HOME/{corpus,train,tune}
+    && /bin/bash -c "rm -rf $WORK_HOME/{corpus,train,tune}"
 
 EXPOSE 8080
 CMD exec ${MOSES_HOME}/bin/mosesserver \
