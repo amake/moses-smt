@@ -11,7 +11,7 @@ ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
 # Make language model
 mkdir ${WORK_HOME}/lm
 cd ${WORK_HOME}/lm
-${MOSES_HOME}/bin/lmplz -o 3 \
+${MOSES_HOME}/bin/lmplz -o 3 ${TEST_MODE:+--discount_fallback} \
              < ${WORK_HOME}/corpus/bitext.clean.${TARGET_LANG} \
              > ${WORK_HOME}/lm/bitext.arpa.${TARGET_LANG}
 ${MOSES_HOME}/bin/build_binary \

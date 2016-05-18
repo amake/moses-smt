@@ -5,6 +5,9 @@ ARG target
 ENV SOURCE_LANG $source
 ENV TARGET_LANG $target
 
+ARG test
+ENV TEST_MODE $test
+
 ENV DATA_HOME=$HOME/data
 ENV WORK_HOME=$HOME/work
 
