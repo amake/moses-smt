@@ -1,5 +1,3 @@
-SOURCE_LANG=ja
-TARGET_LANG=en
 PORT=8080
 
 moses:
@@ -20,7 +18,20 @@ tune-corpus: env
 corpus: train-corpus tune-corpus
 
 train: moses corpus
-	docker build -t moses-trained --build-arg source=$(SOURCE_LANG) \
+ifndef SOURCE_LANG
+	echo "You must provide the source language as SOURCE_LANG=<lang code>"
+	exit 1
+endif
+ifndef TARGET_LANG
+	echo "You must provide the source language as SOURCE_LANG=<lang code>"
+	exit 1
+endif
+ifeq ($(SOURCE_LANG),$(TARGET_LANG))
+	echo "The source and target languages can't be identical"
+	exit 1
+endif
+	docker build -t moses-trained-$(SOURCE_LANG)-$(TARGET_LANG) \
+		--build-arg source=$(SOURCE_LANG) \
 		--build-arg target=$(TARGET_LANG) .
 
 run: train
