@@ -1,11 +1,10 @@
 PORT=8080
 
 
-corpus: train-corpus tune-corpus
 run: train
 	docker run -p $(PORT):8080 moses-trained
 
-train: moses corpus
+train: moses train-corpus tune-corpus
 ifndef SOURCE_LANG
 	echo "You must provide the source language as SOURCE_LANG=<lang code>"
 	exit 1
