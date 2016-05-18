@@ -1,15 +1,17 @@
 PORT=8080
+LABEL=trained
+TAG=moses-$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 
 .PHONY: run runExisting train langs moses clean
 
 run: langs train
-	docker run -p $(PORT):8080 moses-trained-$(SOURCE_LANG)-$(TARGET_LANG)
+	docker run -p $(PORT):8080 $(TAG)
 
 runExisting: langs
-	docker run -p $(PORT):8080 moses-trained-$(SOURCE_LANG)-$(TARGET_LANG)
+	docker run -p $(PORT):8080 $(TAG)
 
 train: langs moses train-corpus tune-corpus
-	docker build -t moses-trained-$(SOURCE_LANG)-$(TARGET_LANG) \
+	docker build -t $(TAG) \
 		--build-arg source=$(SOURCE_LANG) \
 		--build-arg target=$(TARGET_LANG) .
 
