@@ -11,11 +11,11 @@ env:
 
 train-corpus: env
 	if [ ! -d train-corpus ]; then mkdir train-corpus; fi
-	cd train-corpus; ../env/bin/tmx2corpus ../train-tmx
+	cd train-corpus; ../env/bin/tmx2corpus -v ../train-tmx
 
 tune-corpus: env
 	if [ ! -d tune-corpus ]; then mkdir tune-corpus; fi
-	cd tune-corpus; ../env/bin/tmx2corpus ../tune-tmx
+	cd tune-corpus; ../env/bin/tmx2corpus -v ../tune-tmx
 
 corpus: train-corpus tune-corpus
 
