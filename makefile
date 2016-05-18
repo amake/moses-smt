@@ -1,11 +1,16 @@
 PORT=8080
 
-.PHONY: run train moses clean
+.PHONY: run train langs moses clean
 
-run: train
-	docker run -p $(PORT):8080 moses-trained
+run: langs train
+	docker run -p $(PORT):8080 moses-trained-$(SOURCE_LANG)-$(TARGET_LANG)
 
-train: moses train-corpus tune-corpus
+train: langs moses train-corpus tune-corpus
+	docker build -t moses-trained-$(SOURCE_LANG)-$(TARGET_LANG) \
+		--build-arg source=$(SOURCE_LANG) \
+		--build-arg target=$(TARGET_LANG) .
+
+langs:
 ifndef SOURCE_LANG
 	echo "You must provide the source language as SOURCE_LANG=<lang code>"
 	exit 1
@@ -18,9 +23,6 @@ ifeq ($(SOURCE_LANG),$(TARGET_LANG))
 	echo "The source and target languages can't be identical"
 	exit 1
 endif
-	docker build -t moses-trained-$(SOURCE_LANG)-$(TARGET_LANG) \
-		--build-arg source=$(SOURCE_LANG) \
-		--build-arg target=$(TARGET_LANG) .
 
 moses:
 	docker build -t moses -f Dockerfile-base .
