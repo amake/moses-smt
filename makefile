@@ -1,5 +1,6 @@
 PORT=8080
 
+.PHONY: run train moses clean
 
 run: train
 	docker run -p $(PORT):8080 moses-trained
