@@ -1,8 +1,11 @@
 PORT=8080
 
-.PHONY: run train langs moses clean
+.PHONY: run runExisting train langs moses clean
 
 run: langs train
+	docker run -p $(PORT):8080 moses-trained-$(SOURCE_LANG)-$(TARGET_LANG)
+
+runExisting: langs
 	docker run -p $(PORT):8080 moses-trained-$(SOURCE_LANG)-$(TARGET_LANG)
 
 train: langs moses train-corpus tune-corpus
