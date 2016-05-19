@@ -1,6 +1,6 @@
 PORT=8080
 LABEL=trained
-TAG=moses-$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
+TAG=moses:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 HELLO_WORLD=/bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 TEST_MODE=
@@ -46,7 +46,7 @@ ifeq ($(SOURCE_LANG),$(TARGET_LANG))
 endif
 
 moses:
-	docker build -t moses -f Dockerfile-base .
+	docker build -t moses:base -f Dockerfile-base .
 
 env:
 	virtualenv env

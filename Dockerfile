@@ -1,4 +1,4 @@
-FROM moses
+FROM moses:base
 
 ARG source
 ARG target
