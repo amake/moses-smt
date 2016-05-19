@@ -1,5 +1,7 @@
 FROM moses:base
 
+RUN useradd --user-group --create-home --shell /bin/false moses
+
 ARG source
 ARG target
 ENV SOURCE_LANG $source
@@ -8,6 +10,7 @@ ENV TARGET_LANG $target
 ARG test
 ENV TEST_MODE $test
 
+ENV HOME=/home/moses
 ENV DATA_HOME=$HOME/data
 ENV WORK_HOME=$HOME/work
 
@@ -15,7 +18,6 @@ COPY setup-bin/*.sh $DATA_HOME/
 COPY train-corpus $DATA_HOME/train/
 COPY tune-corpus $DATA_HOME/tune/
 
-USER root
 RUN chown -R moses:moses $DATA_HOME
 USER moses
 

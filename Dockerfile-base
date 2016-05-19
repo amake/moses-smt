@@ -1,6 +1,11 @@
 FROM ubuntu:14.04
 
-RUN apt-get update && apt-get install -q -y build-essential \
+ENV BIN_HOME=/opt/bin
+ENV MOSES_HOME=$BIN_HOME/moses
+
+WORKDIR $MOSES_HOME
+
+ENV PACKAGES="build-essential \
     git-core \
     pkg-config \
     automake \
@@ -8,38 +13,26 @@ RUN apt-get update && apt-get install -q -y build-essential \
     wget \
     zlib1g-dev \
     python-dev \
-    libbz2-dev
+    libbz2-dev"
 
-RUN useradd --user-group --create-home --shell /bin/false moses
-
-ENV HOME=/home/moses
-
-ENV BIN_HOME=$HOME/bin
-ENV MOSES_HOME=$BIN_HOME/moses
-
-WORKDIR $MOSES_HOME
-RUN chown -R moses:moses $HOME
-
-USER moses
-
-# Build uses multiple cores if available, but this requires
-# extra RAM (4 cores: 2 GB)
-RUN git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
+RUN apt-get update && apt-get install -q -y $PACKAGES \
+    && git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake \
        PREFIX=${BIN_HOME}/opt \
     && OPT=${BIN_HOME}/opt ./compile.sh --prefix=${MOSES_HOME} \
        --install-scripts \
     && cd - \
-    && rm -rf mosesdecoder
-
-RUN git clone --depth 1 https://github.com/moses-smt/giza-pp.git \
+    && rm -rf mosesdecoder \
+    && git clone --depth 1 https://github.com/moses-smt/giza-pp.git \
     && cd giza-pp \
     && make \
     && mkdir ${BIN_HOME}/tools \
     && cp GIZA++-v2/GIZA++ GIZA++-v2/snt2cooc.out mkcls-v2/mkcls \
        ${BIN_HOME}/tools \
     && cd - \
-    && rm -rf giza-pp
+    && rm -rf giza-pp \
+    && apt-get remove -q -y $PACKAGES \
+    && apt-get autoremove -q -y
 
 ENV LD_LIBRARY_PATH $BIN_HOME/opt/lib
