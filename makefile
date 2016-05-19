@@ -5,7 +5,7 @@ HELLO_WORLD=/bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 TEST_MODE=
 
-.PHONY: run justRun server justServer train langs moses clean
+.PHONY: run justRun server justServer shell justShell train langs moses clean
 
 run: langs train
 	docker run $(TAG) $(HELLO_WORLD)
@@ -18,6 +18,12 @@ server: langs train
 
 justServer: langs
 	docker run -p $(PORT):8080 $(TAG)
+
+shell: langs train
+	docker run -ti $(TAG) /bin/bash
+
+justShell: langs
+	docker run -ti $(TAG) /bin/bash
 
 train: langs moses train-corpus tune-corpus
 	docker build -t $(TAG) \
