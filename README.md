@@ -37,9 +37,9 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
   - `lbl` is an optional label for the resulting image; `trained` by default.
 
 3. Wait forever. The first time takes the longest as you will build and compile
-the base `moses` image; this is reused across all trained images.
+the `moses:base` image; this is reused across all trained images.
 
-4. When done, you will have a Docker image tagged `moses-trained-<src>-<trg>`.
+4. When done, you will have a Docker image tagged `moses:<lbl>-<src>-<trg>`.
 
   - Run `make server SOURCE_LANG=<src> TARGET_LANG=<trg> [PORT=<port>]` to start
     [`mosesserver`](http://www.statmt.org/moses/?n=Advanced.Moses#ntoc1) which
