@@ -1,4 +1,5 @@
 FROM ubuntu:14.04
+MAINTAINER aaron@madlon-kay.com
 
 ENV BIN_HOME=/opt/bin
 ENV MOSES_HOME=$BIN_HOME/moses

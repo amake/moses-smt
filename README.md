@@ -1,7 +1,7 @@
-# Moses in Docker
+# Dock You a Moses
 
-Want to play with [Moses](http://www.statmt.org/moses/), the statistical machine
-translation system, but...
+Want to play with the [Moses](http://www.statmt.org/moses/)
+Statistical Machine Translation system, but...
 
 - You don't have time to get a PhD in Setting Up Moses?
 
@@ -10,6 +10,18 @@ translation system, but...
 
 Well now you don't have to, because I stuffed Moses in a Docker container for
 you.
+
+# Docker Image
+
+The base Moses installation is built and hosted on [Docker
+Hub](https://hub.docker.com/r/amake/moses-base/). The base image alone
+is not useful; if you are reading this on Docker Hub, come on over to
+[GitHub](https://github.com/amake/moses-smt) to get started.
+
+All you need to know about the base image is that I have taken some
+care to minimize the size (but it's still pretty big).
+
+[![](https://imagelayers.io/badge/amake/moses-smt:base.svg)](https://imagelayers.io/?images=amake/moses-smt:base 'Get your own badge on imagelayers.io')
 
 # Requirements
 
@@ -36,10 +48,9 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
 
   - `lbl` is an optional label for the resulting image; `trained` by default.
 
-3. Wait forever. The first time takes the longest as you will build and compile
-the `moses:base` image; this is reused across all trained images.
+3. Wait forever.
 
-4. When done, you will have a Docker image tagged `moses:<lbl>-<src>-<trg>`.
+4. When done, you will have a Docker image tagged `moses-smt:<lbl>-<src>-<trg>`.
 
   - Run `make server SOURCE_LANG=<src> TARGET_LANG=<trg> [PORT=<port>]` to start
     [`mosesserver`](http://www.statmt.org/moses/?n=Advanced.Moses#ntoc1) which
@@ -50,4 +61,26 @@ the `moses:base` image; this is reused across all trained images.
   - Use the `justRun` or `justServer` targets to make use of existing Docker
     images without going invoking training.
 
-5. Train a new image with swapped languages or with a new set of TMXs.
+## What then?
+
+- Train a new image with swapped languages or with a new set of TMXs.
+
+- Push the image to Docker Hub, then throw that bad boy on Amazon
+  Elastic Beanstalk and use it for translation in
+  [OmegaT](https://github.com/amake/omegat-moses-mt). Sample
+  `Dockerrun.aws.json`:
+
+```
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "<username>/moses-smt:<lbl>-<src>-<trg>",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "8080"
+    }
+  ]
+}
+```

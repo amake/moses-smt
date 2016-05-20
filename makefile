@@ -1,11 +1,11 @@
 PORT=8080
 LABEL=trained
-TAG=moses:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
+TAG=moses-smt:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 HELLO_WORLD=/bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 TEST_MODE=
 
-.PHONY: run justRun server justServer shell justShell train langs moses clean
+.PHONY: run justRun server justServer shell justShell train langs clean
 
 run: langs train
 	docker run $(TAG) $(HELLO_WORLD)
@@ -25,7 +25,7 @@ shell: langs train
 justShell: langs
 	docker run -ti $(TAG) /bin/bash
 
-train: langs moses train-corpus tune-corpus
+train: langs train-corpus tune-corpus
 	docker build -t $(TAG) \
 		--build-arg source=$(SOURCE_LANG) \
 		--build-arg target=$(TARGET_LANG) \
@@ -44,9 +44,6 @@ ifeq ($(SOURCE_LANG),$(TARGET_LANG))
 	echo "The source and target languages can't be identical"
 	exit 1
 endif
-
-moses:
-	docker build -t moses:base -f Dockerfile-base .
 
 env:
 	LC_ALL=C virtualenv env

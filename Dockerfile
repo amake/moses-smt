@@ -1,4 +1,4 @@
-FROM moses:base
+FROM amake/moses-smt:base
 
 RUN useradd --user-group --create-home --shell /bin/false moses
 
