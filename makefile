@@ -49,7 +49,7 @@ moses:
 	docker build -t moses:base -f Dockerfile-base .
 
 env:
-	virtualenv env
+	LC_ALL=C virtualenv env
 	env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
 train-corpus: env
