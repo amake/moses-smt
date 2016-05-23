@@ -47,14 +47,16 @@ endif
 
 env:
 	LC_ALL=C virtualenv env
+
+env/bin/tmx2corpus: env
 	env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
-train-corpus: env
+train-corpus: env/bin/tmx2corpus
 	if [ ! -d train-corpus ]; then mkdir train-corpus; fi
 	cd train-corpus; ../env/bin/tmx2corpus -v ../train-tmx
 	touch train-corpus
 
-tune-corpus: env
+tune-corpus: env/bin/tmx2corpus
 	if [ ! -d tune-corpus ]; then mkdir tune-corpus; fi
 	cd tune-corpus; ../env/bin/tmx2corpus -v ../tune-tmx
 	touch tune-corpus
