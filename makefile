@@ -5,33 +5,44 @@ HELLO_WORLD=/bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 TEST_MODE=
 
-.PHONY: run justRun server justServer shell justShell train langs clean
+required=$(if $($1),,$(error Required parameter missing: $1))
+checklangs=$(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
-run: langs train
+.PHONY: run justRun server justServer shell justShell train clean
+
+run: train
+	$(call checklangs)
 	docker run $(TAG) $(HELLO_WORLD)
 
-justRun: langs
+justRun:
+	$(call checklangs)
 	docker run $(TAG) $(HELLO_WORLD)
 
-server: langs train
+server: train
+	$(call checklangs)
 	docker run -p $(PORT):8080 $(TAG)
 
-justServer: langs
+justServer:
+	$(call checklangs)
 	docker run -p $(PORT):8080 $(TAG)
 
-shell: langs train
+shell: train
+	$(call checklangs)
 	docker run -ti $(TAG) /bin/bash
 
-justShell: langs
+justShell:
+	$(call checklangs)
 	docker run -ti $(TAG) /bin/bash
 
-train: langs train-corpus tune-corpus
+train: train-corpus tune-corpus
+	$(call checklangs)
 	docker build -t $(TAG) \
 		--build-arg source=$(SOURCE_LANG) \
 		--build-arg target=$(TARGET_LANG) \
 		--build-arg test=$(TEST_MODE) .
 
-deploy.zip: langs train-corpus tune-corpus
+deploy.zip: train-corpus tune-corpus
+	$(call checklangs)
 	if [ -f deploy.zip ]; then rm deploy.zip; fi
 	sed -e "s/@DEFAULT_SRC_LANG@/$(SOURCE_LANG)/" \
 		-e "s/@DEFAULT_TRG_LANG@/$(TARGET_LANG)/" Dockerfile > Dockerfile-deploy
@@ -41,20 +52,6 @@ deploy.zip: langs train-corpus tune-corpus
 		-x \*/.DS_Store
 	rm Dockerfile
 	mv Dockerfile{-tmp,}
-
-langs:
-ifndef SOURCE_LANG
-	echo "You must provide the source language as SOURCE_LANG=<lang code>"
-	exit 1
-endif
-ifndef TARGET_LANG
-	echo "You must provide the source language as SOURCE_LANG=<lang code>"
-	exit 1
-endif
-ifeq ($(SOURCE_LANG),$(TARGET_LANG))
-	echo "The source and target languages can't be identical"
-	exit 1
-endif
 
 env:
 	LC_ALL=C virtualenv env
