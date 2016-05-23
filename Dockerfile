@@ -2,8 +2,8 @@ FROM amake/moses-smt:base
 
 RUN useradd --user-group --create-home --shell /bin/false moses
 
-ARG source
-ARG target
+ARG source=@DEFAULT_SRC_LANG@
+ARG target=@DEFAULT_TRG_LANG@
 ENV SOURCE_LANG $source
 ENV TARGET_LANG $target
 

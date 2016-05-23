@@ -31,6 +31,17 @@ train: langs train-corpus tune-corpus
 		--build-arg target=$(TARGET_LANG) \
 		--build-arg test=$(TEST_MODE) .
 
+deploy.zip: langs train-corpus tune-corpus
+	if [ -f deploy.zip ]; then rm deploy.zip; fi
+	sed -e "s/@DEFAULT_SRC_LANG@/$(SOURCE_LANG)/" \
+		-e "s/@DEFAULT_TRG_LANG@/$(TARGET_LANG)/" Dockerfile > Dockerfile-deploy
+	mv Dockerfile{,-tmp}
+	mv Dockerfile{-deploy,}
+	zip -r deploy Dockerfile Dockerrun.aws.json setup-bin *-corpus/bitext.tok.*\
+		-x \*/.DS_Store
+	rm Dockerfile
+	mv Dockerfile{-tmp,}
+
 langs:
 ifndef SOURCE_LANG
 	echo "You must provide the source language as SOURCE_LANG=<lang code>"
