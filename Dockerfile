@@ -15,8 +15,8 @@ ENV DATA_HOME=$HOME/data
 ENV WORK_HOME=$HOME/work
 
 COPY setup-bin/*.sh $DATA_HOME/
-COPY train-corpus $DATA_HOME/train/
-COPY tune-corpus $DATA_HOME/tune/
+COPY train-corpus/bitext.tok.* $DATA_HOME/train/
+COPY tune-corpus/bitext.tok.* $DATA_HOME/tune/
 
 RUN chown -R moses:moses $DATA_HOME
 USER moses
