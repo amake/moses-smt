@@ -2,3 +2,8 @@ env
 *-corpus
 *-tmx/**/*.tmx
 *.zip
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

@@ -62,6 +62,9 @@ env:
 env/bin/tmx2corpus: env
 	env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
+env/bin/eb: env
+	env/bin/pip install awsebcli
+
 train-corpus: env/bin/tmx2corpus
 	if [ ! -d train-corpus ]; then mkdir train-corpus; fi
 	cd train-corpus; ../env/bin/tmx2corpus -v ../train-tmx
