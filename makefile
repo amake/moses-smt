@@ -8,31 +8,7 @@ TEST_MODE=
 required=$(if $($1),,$(error Required parameter missing: $1))
 checklangs=$(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
-.PHONY: run justRun server justServer shell justShell train clean
-
-run: train
-	$(call checklangs)
-	docker run $(TAG) $(HELLO_WORLD)
-
-justRun:
-	$(call checklangs)
-	docker run $(TAG) $(HELLO_WORLD)
-
-server: train
-	$(call checklangs)
-	docker run -p $(PORT):8080 $(TAG)
-
-justServer:
-	$(call checklangs)
-	docker run -p $(PORT):8080 $(TAG)
-
-shell: train
-	$(call checklangs)
-	docker run -ti $(TAG) /bin/bash
-
-justShell:
-	$(call checklangs)
-	docker run -ti $(TAG) /bin/bash
+.PHONY: run server shell train clean
 
 train: train-corpus tune-corpus
 	$(call checklangs)
@@ -40,6 +16,18 @@ train: train-corpus tune-corpus
 		--build-arg source=$(SOURCE_LANG) \
 		--build-arg target=$(TARGET_LANG) \
 		--build-arg test=$(TEST_MODE) .
+
+run:
+	$(call checklangs)
+	docker run $(TAG) $(HELLO_WORLD)
+
+server:
+	$(call checklangs)
+	docker run -p $(PORT):8080 $(TAG)
+
+shell:
+	$(call checklangs)
+	docker run -ti $(TAG) /bin/bash
 
 deploy.zip: train-corpus tune-corpus
 	$(call checklangs)
