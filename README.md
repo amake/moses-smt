@@ -29,6 +29,8 @@ care to minimize the size (but it's still pretty big).
 
 - Docker
 
+- Python 2.7 with pip and virtualenv
+
 - OS X? (not tested elsewhere)
 
 - Some TMX files ([Okapi](http://okapi.opentag.com/) Rainbow is a good tool for
