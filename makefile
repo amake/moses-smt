@@ -52,10 +52,12 @@ env:
 train-corpus: env
 	if [ ! -d train-corpus ]; then mkdir train-corpus; fi
 	cd train-corpus; ../env/bin/tmx2corpus -v ../train-tmx
+	touch train-corpus
 
 tune-corpus: env
 	if [ ! -d tune-corpus ]; then mkdir tune-corpus; fi
 	cd tune-corpus; ../env/bin/tmx2corpus -v ../tune-tmx
+	touch tune-corpus
 
 clean:
 	rm -rf ./*-corpus env
