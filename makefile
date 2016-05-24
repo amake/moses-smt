@@ -8,7 +8,7 @@ TEST_MODE=
 required=$(if $($1),,$(error Required parameter missing: $1))
 checklangs=$(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
-.PHONY: run server shell train clean
+.PHONY: run server shell train base clean
 
 train: train-corpus tune-corpus
 	$(call checklangs)
@@ -59,6 +59,9 @@ tune-corpus: env/bin/tmx2corpus
 	if [ ! -d tune-corpus ]; then mkdir tune-corpus; fi
 	cd tune-corpus; ../env/bin/tmx2corpus -v ../tune-tmx
 	touch tune-corpus
+
+base:
+	cd base; docker build -t moses-smt:base .
 
 clean:
 	rm -rf ./*-corpus env
