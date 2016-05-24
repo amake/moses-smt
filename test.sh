@@ -13,7 +13,7 @@ for CORPUS in ${CORPI[@]}; do
     echo "ほげ ふが ぴよ" > $CORPUS-corpus/bitext.tok.$TARGET_LANG
 done
 
-make run LABEL=test TEST_MODE=true
+make train run LABEL=test TEST_MODE=true
 
 for CORPUS in ${CORPI[@]}; do
     rm -rf ./$CORPUS-corpus
