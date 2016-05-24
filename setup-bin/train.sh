@@ -37,7 +37,8 @@ ${MOSES_HOME}/scripts/training/train-model.perl -root-dir ${WORK_HOME}/train \
 	-f ${SOURCE_LANG} -e ${TARGET_LANG} \
     -alignment grow-diag-final-and -reordering msd-bidirectional-fe \
 	-lm 0:3:${WORK_HOME}/lm/bitext.blm.${TARGET_LANG}:8 \
-	-external-bin-dir ${BIN_HOME}/tools -cores $(nproc) > training.out
+	-external-bin-dir ${BIN_HOME}/tools -cores $(nproc) \
+    -mgiza -mgiza-cpus $(nproc) > training.out
 
 if [ "${TARGET_LANG}" = "ja" ] || [ "${TARGET_LANG}" = "zh" ] || \
 	[ "${SOURCE_LANG}" = "ja" ] || [ "${SOURCE_LANG}" = "zh" ]; then
