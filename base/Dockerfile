@@ -17,7 +17,7 @@ ENV PACKAGES="build-essential \
     libbz2-dev \
     cmake"
 
-RUN apt-get update && apt-get install -q -y ${PACKAGES} \
+RUN apt-get update && apt-get install -q -y ${PACKAGES} python \
     && git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake PREFIX=/opt \
@@ -33,7 +33,6 @@ RUN apt-get update && apt-get install -q -y ${PACKAGES} \
     && cp bin/* scripts/merge_alignment.py ${BIN_HOME}/tools \
     && cd - \
     && rm -rf mgiza \
-    && apt-get install -q -y python \
     && apt-get remove -q -y ${PACKAGES} \
     && apt-get autoremove -q -y
 
