@@ -50,12 +50,18 @@ env/bin/tmx2corpus: env
 env/bin/eb: env
 	env/bin/pip install awsebcli
 
-train-corpus: env/bin/tmx2corpus
+train-tmx:
+	touch train-tmx
+
+train-corpus: env/bin/tmx2corpus train-tmx
 	if [ ! -d train-corpus ]; then mkdir train-corpus; fi
 	cd train-corpus; ../env/bin/tmx2corpus -v ../train-tmx
 	touch train-corpus
 
-tune-corpus: env/bin/tmx2corpus
+tune-tmx:
+	touch tune-tmx
+
+tune-corpus: env/bin/tmx2corpus tune-tmx
 	if [ ! -d tune-corpus ]; then mkdir tune-corpus; fi
 	cd tune-corpus; ../env/bin/tmx2corpus -v ../tune-tmx
 	touch tune-corpus
