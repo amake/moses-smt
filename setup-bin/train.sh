@@ -3,14 +3,18 @@
 mkdir -p ${WORK_HOME}/corpus
 cd ${WORK_HOME}/corpus
 
-# Truecase
 for LANG in $SOURCE_LANG $TARGET_LANG; do
+    # Escape special characters
+    ${MOSES_HOME}/scripts/tokenizer/escape-special-chars.perl \
+                 < ${DATA_HOME}/train/bitext.tok.${LANG} \
+                 > bitext.esc.${LANG}
+    # Truecase
     ${MOSES_HOME}/scripts/recaser/train-truecaser.perl \
                  --model truecase-model.${LANG} \
-                 --corpus ${DATA_HOME}/train/bitext.tok.${LANG}
+                 --corpus bitext.esc.${LANG}
     ${MOSES_HOME}/scripts/recaser/truecase.perl \
                  --model truecase-model.${LANG} \
-                 < ${DATA_HOME}/train/bitext.tok.${LANG} \
+                 < bitext.esc.${LANG} \
                  > bitext.true.${LANG}
 done
 
