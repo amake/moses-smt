@@ -1,5 +1,6 @@
 #!/bin/bash -exu
 
+[ -d ${WORK_HOME}/binary ] && rm -rf ${WORK_HOME}/binary
 mkdir -p ${WORK_HOME}/binary
 cd ${WORK_HOME}/binary
 

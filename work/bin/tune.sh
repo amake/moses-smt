@@ -24,6 +24,7 @@ ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
 	bitext.clean 1 80
 
 
+[ -d ${WORK_HOME}/tune ] && rm -rf ${WORK_HOME}/tune
 mkdir -p ${WORK_HOME}/tune
 cd ${WORK_HOME}/tune
 

@@ -24,6 +24,7 @@ ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
 	bitext.clean 1 80
 
 # Make language model
+[ -d ${WORK_HOME}/lm ] && rm -rf ${WORK_HOME}/lm
 mkdir -p ${WORK_HOME}/lm
 cd ${WORK_HOME}/lm
 ${MOSES_HOME}/bin/lmplz -o 3 ${TEST_MODE:+--discount_fallback} \
@@ -34,6 +35,7 @@ ${MOSES_HOME}/bin/build_binary \
 	bitext.blm.${TARGET_LANG}
 
 # Train
+[ -d ${WORK_HOME}/train ] && rm -rf ${WORK_HOME}/train
 mkdir -p ${WORK_HOME}/train
 cd ${WORK_HOME}/train
 ${MOSES_HOME}/scripts/training/train-model.perl -root-dir ${WORK_HOME}/train \
