@@ -4,7 +4,7 @@ TAG ?= moses-smt:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 
 root_dir = $(shell pwd)
 work_dir = work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
-work_run = docker run -v $(root_dir)/work:/home/moses/work \
+work_run = docker run -it -v $(root_dir)/work:/home/moses/work \
 	-e WORK_HOME=/home/moses/$(work_dir) \
 	-e SOURCE_LANG=$(SOURCE_LANG) \
 	-e TARGET_LANG=$(TARGET_LANG) \
