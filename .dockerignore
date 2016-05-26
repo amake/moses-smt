@@ -1,4 +1,2 @@
-env
-*-tmx
-*.zip
-*-tmp
+*
+!work

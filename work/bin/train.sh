@@ -1,12 +1,12 @@
 #!/bin/bash -exu
 
-mkdir -p ${WORK_HOME}/corpus
-cd ${WORK_HOME}/corpus
+mkdir -p ${WORK_HOME}/corpus-train
+cd ${WORK_HOME}/corpus-train
 
 for LANG in $SOURCE_LANG $TARGET_LANG; do
     # Escape special characters
     ${MOSES_HOME}/scripts/tokenizer/escape-special-chars.perl \
-                 < ${DATA_HOME}/train/bitext.tok.${LANG} \
+                 < bitext.tok.${LANG} \
                  > bitext.esc.${LANG}
     # Truecase
     ${MOSES_HOME}/scripts/recaser/train-truecaser.perl \
@@ -24,20 +24,20 @@ ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
 	bitext.clean 1 80
 
 # Make language model
-mkdir ${WORK_HOME}/lm
+mkdir -p ${WORK_HOME}/lm
 cd ${WORK_HOME}/lm
 ${MOSES_HOME}/bin/lmplz -o 3 ${TEST_MODE:+--discount_fallback} \
-             < ${WORK_HOME}/corpus/bitext.clean.${TARGET_LANG} \
+             < ${WORK_HOME}/corpus-train/bitext.clean.${TARGET_LANG} \
              > bitext.arpa.${TARGET_LANG}
 ${MOSES_HOME}/bin/build_binary \
 	bitext.arpa.${TARGET_LANG} \
 	bitext.blm.${TARGET_LANG}
 
 # Train
-mkdir ${WORK_HOME}/train
+mkdir -p ${WORK_HOME}/train
 cd ${WORK_HOME}/train
 ${MOSES_HOME}/scripts/training/train-model.perl -root-dir ${WORK_HOME}/train \
-	-corpus ${WORK_HOME}/corpus/bitext.clean \
+	-corpus ${WORK_HOME}/corpus-train/bitext.clean \
 	-f ${SOURCE_LANG} -e ${TARGET_LANG} \
     -alignment grow-diag-final-and -reordering msd-bidirectional-fe \
 	-lm 0:3:${WORK_HOME}/lm/bitext.blm.${TARGET_LANG}:8 \

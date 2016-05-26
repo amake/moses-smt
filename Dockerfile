@@ -2,29 +2,13 @@ FROM amake/moses-smt:base
 
 RUN useradd --user-group --create-home --shell /bin/false moses
 
-ARG source=@DEFAULT_SRC_LANG@
-ARG target=@DEFAULT_TRG_LANG@
-ENV SOURCE_LANG $source
-ENV TARGET_LANG $target
+ARG work_dir=@DEFAULT_WORK_DIR@
+ENV WORK_HOME=/home/moses/$work_dir
 
-ARG test
-ENV TEST_MODE $test
-
-ENV HOME=/home/moses
-ENV DATA_HOME=$HOME/data
-ENV WORK_HOME=$HOME/work
-
-COPY setup-bin/*.sh $DATA_HOME/
-COPY train-corpus/bitext.tok.* $DATA_HOME/train/
-COPY tune-corpus/bitext.tok.* $DATA_HOME/tune/
-
-RUN chown -R moses:moses $DATA_HOME
 USER moses
 
-RUN $DATA_HOME/train.sh \
-    && $DATA_HOME/tune.sh \
-    && $DATA_HOME/binarize.sh \
-    && /bin/bash -c "rm -rf $WORK_HOME/{corpus,train,tune}"
+COPY $work_dir/lm $WORK_HOME/lm
+COPY $work_dir/binary $WORK_HOME/binary
 
 EXPOSE 8080
 CMD exec ${MOSES_HOME}/bin/mosesserver \

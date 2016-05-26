@@ -1,7 +1,8 @@
 env
-*-corpus
 *-tmx/**/*.tmx
 *.zip
+work/*
+!work/bin
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

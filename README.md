@@ -48,7 +48,7 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
   - `src` and `trg` (required) are the language codes (*not* language + country)
     for your source and target languages, e.g. `en` and `fr`.
 
-  - `lbl` is an optional label for the resulting image; `trained` by default.
+  - `lbl` is an optional label for the resulting image; `myinstance` by default.
 
 3. Wait forever.
 
@@ -59,9 +59,6 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
     you can query over XML-RPC.
 
   - Optionally specify a port; the default is `8080`.
-
-  - Use the `justRun` or `justServer` targets to make use of existing Docker
-    images without going invoking training.
 
 ## What then?
 

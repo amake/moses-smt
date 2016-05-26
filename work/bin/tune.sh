@@ -1,12 +1,12 @@
 #!/bin/bash -exu
 
-mkdir -p ${WORK_HOME}/tune
-cd ${WORK_HOME}/tune
+mkdir -p ${WORK_HOME}/corpus-tune
+cd ${WORK_HOME}/corpus-tune
 
 for LANG in $SOURCE_LANG $TARGET_LANG; do
     # Escape special characters
     ${MOSES_HOME}/scripts/tokenizer/escape-special-chars.perl \
-                 < ${DATA_HOME}/tune/bitext.tok.${LANG} \
+                 < bitext.tok.${LANG} \
                  > bitext.esc.${LANG}
     # Truecase
     ${MOSES_HOME}/scripts/recaser/train-truecaser.perl \
@@ -24,10 +24,13 @@ ${MOSES_HOME}/scripts/training/clean-corpus-n.perl \
 	bitext.clean 1 80
 
 
+mkdir -p ${WORK_HOME}/tune
+cd ${WORK_HOME}/tune
+
 # Tune
 ${MOSES_HOME}/scripts/training/mert-moses.pl \
-	bitext.clean.${SOURCE_LANG} \
-    bitext.clean.${TARGET_LANG} \
+	${WORK_HOME}/corpus-tune/bitext.clean.${SOURCE_LANG} \
+    ${WORK_HOME}/corpus-tune/bitext.clean.${TARGET_LANG} \
 	${MOSES_HOME}/bin/moses ${WORK_HOME}/train/model/moses.ini \
     --mertdir ${MOSES_HOME}/bin/ \
 	--decoder-flags="-threads $(nproc)" > mert.out

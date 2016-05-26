@@ -2,21 +2,13 @@
 
 export SOURCE_LANG=en
 export TARGET_LANG=ja
+export LABEL=test
+WORK_DIR=work/$LABEL-$SOURCE_LANG-$TARGET_LANG
 
-CORPI=(train
-       tune)
-
-for CORPUS in ${CORPI[@]}; do
-    [ -d $CORPUS-corpus ] && mv $CORPUS-corpus{,-tmp}
-    mkdir $CORPUS-corpus
-    echo "foo bar baz" > $CORPUS-corpus/bitext.tok.$SOURCE_LANG
-    echo "ほげ ふが ぴよ" > $CORPUS-corpus/bitext.tok.$TARGET_LANG
+for CORPUS in train tune; do
+    mkdir -p $WORK_DIR/corpus-$CORPUS
+    echo "foo bar baz" > $WORK_DIR/corpus-$CORPUS/bitext.tok.$SOURCE_LANG
+    echo "ほげ ふが ぴよ" > $WORK_DIR/corpus-$CORPUS/bitext.tok.$TARGET_LANG
 done
 
-make train run LABEL=test TEST_MODE=true
-
-for CORPUS in ${CORPI[@]}; do
-    rm -rf ./$CORPUS-corpus
-    [ -d $CORPUS-corpus-tmp ] && mv $CORPUS-corpus{-tmp,}
-done
-
+make build run TEST_MODE=true
