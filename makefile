@@ -83,7 +83,9 @@ deploy.zip: $(work_dir)/binary/moses.ini
 env:
 	LC_ALL=C virtualenv env
 
-tmx2corpus: env/bin/tmx2corpus
+tmx2corpus:
+	env/bin/pip install -U git+https://github.com/amake/tmx2corpus.git
+
 env/bin/tmx2corpus: env
 	env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
