@@ -4,7 +4,7 @@ TAG ?= moses-smt:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 
 root_dir = $(shell pwd)
 work_dir = work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
-work_run = docker run -it -v $(root_dir)/work:/home/moses/work \
+work_run = docker run --rm -it -v $(root_dir)/work:/home/moses/work \
 	-e WORK_HOME=/home/moses/$(work_dir) \
 	-e SOURCE_LANG=$(SOURCE_LANG) \
 	-e TARGET_LANG=$(TARGET_LANG) \
@@ -60,16 +60,16 @@ corpus-%/bitext.tok.*: tmx-% env/bin/tmx2corpus
 
 run:
 	$(call checklangs)
-	docker run $(TAG) /bin/sh -c 'echo foo |\
+	docker run --rm $(TAG) /bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 
 server:
 	$(call checklangs)
-	docker run -p $(PORT):8080 $(TAG)
+	docker run --rm -p $(PORT):8080 $(TAG)
 
 shell:
 	$(call checklangs)
-	docker run -ti $(TAG) /bin/bash
+	docker run --rm -ti $(TAG) /bin/bash
 
 deploy.zip: $(work_dir)/binary/moses.ini
 	$(call checklangs)
