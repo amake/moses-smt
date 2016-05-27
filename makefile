@@ -104,13 +104,15 @@ push:
 env:
 	LC_ALL=C virtualenv env
 
-tmx2corpus:
+tmx2corpus: env
 	env/bin/pip install -U git+https://github.com/amake/tmx2corpus.git
 
 env/bin/tmx2corpus: env
 	env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
-eb: env/bin/eb
+eb: env
+	env/bin/pip install -U awsebcli
+
 env/bin/eb: env
 	env/bin/pip install awsebcli
 
