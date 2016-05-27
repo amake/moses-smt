@@ -53,7 +53,7 @@ $(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
 	mkdir -p $(work_dir)/corpus-$*
 	cp corpus-$*/bitext.tok.* $(work_dir)/corpus-$*/
 
-corpus-%/bitext.tok.*: tmx-% env/bin/tmx2corpus
+corpus-%/bitext.tok.*: env/bin/tmx2corpus
 	$(call checklangs)
 	mkdir -p corpus-$*
 	. env/bin/activate; cd corpus-$*; tmx2corpus -v $(root_dir)/tmx-$*
@@ -92,9 +92,6 @@ env/bin/tmx2corpus: env
 eb: env/bin/eb
 env/bin/eb: env
 	env/bin/pip install awsebcli
-
-%-tmx:
-	touch $@
 
 base:
 	cd base; docker build -t moses-smt:base .
