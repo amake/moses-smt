@@ -21,7 +21,8 @@ all: build
 
 build: train
 	$(call checklangs)
-	docker build -t $(TAG) --build-arg work_dir=$(work_dir) .
+	tar -cf - Dockerfile $(work_dir) | docker build -t $(TAG) \
+		--build-arg work_dir=$(work_dir) -
 
 train: $(work_dir)/binary/moses.ini
 
