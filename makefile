@@ -39,6 +39,13 @@ $(work_dir)/binary/moses.ini: $(work_dir)/tune/mert-work/moses.ini
 	$(call checklangs)
 	$(work_run) /home/moses/work/bin/binarize.sh
 
+shrink: SHELL = /bin/bash -O extglob
+shrink:
+	$(call checklangs)
+	rm -rf $(work_dir)/corpus-*/!(bitext.tok.*)
+	rm -rf $(work_dir)/train/{!(model),model/!(moses.ini)}
+	rm -rf $(work_dir)/tune/{!(mert-work),mert-work/!(moses.ini)}
+
 corpus: corpus-train/bitext.tok.* corpus-tune/bitext.tok.*
 
 $(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
