@@ -78,7 +78,7 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
   plugin](https://github.com/amake/omegat-moses-mt):
 
   - Run `make server` to run the server locally; the `moses.server.url` value is
-    then `http://$(docker-machine ip)/RPC2`
+    then `http://$(docker-machine ip):8080/RPC2`
 
   - Run `make deploy-hub` and then upload the .zip that's produced as a new EB
     environment
