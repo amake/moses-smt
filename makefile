@@ -17,7 +17,7 @@ checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 
 .PHONY: all build train run server shell base corpus tmx2corpus eb clean deploy-hub \
-	deploy-hub-zip push
+	deploy-hub-zip push repl
 
 all: build
 
@@ -68,6 +68,9 @@ run:
 server:
 	$(call checklangs)
 	docker run --rm -p $(PORT):8080 $(TAG)
+
+repl: env/bin/tmx2corpus
+	. env/bin/activate; ./mosesxmlrpcrepl.py
 
 shell:
 	$(call checklangs)
