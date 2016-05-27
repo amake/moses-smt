@@ -1,6 +1,7 @@
 PORT ?= 8080
 LABEL ?= myinstance
 TAG ?= moses-smt:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
+PUSH_TAG ?= $(TAG)
 
 root_dir = $(shell pwd)
 work_dir = work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
@@ -15,7 +16,8 @@ required = $(if $($1), ,$(error Required parameter missing: $1))
 checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 
-.PHONY: all build train run server shell base corpus tmx2corpus eb clean
+.PHONY: all build train run server shell base corpus tmx2corpus eb clean deploy-hub \
+	push
 
 all: build
 
@@ -81,6 +83,22 @@ deploy.zip: $(work_dir)/binary/moses.ini
 		-x \*/.DS_Store
 	mv Dockerfile{.orig,}
 	mv Dockerrun.aws{,.noimage}.json
+
+push_tag_safe = $(subst /,_,$(subst :,_,$(subst \:,:,$(PUSH_TAG))))
+
+deploy-hub: push deploy-$(push_tag_safe).zip
+
+deploy-$(push_tag_safe).zip:
+	$(call checklangs)
+	if [ -f $@ ]; then rm $@; fi
+	sed -e "s|@NAME@|$(PUSH_TAG)|" Dockerrun.aws.image.json > Dockerrun.aws.json
+	zip $@ Dockerrun.aws.json
+	rm Dockerrun.aws.json
+
+push:
+	$(call checklangs)
+	docker tag $(TAG) $(PUSH_TAG)
+	docker push $(PUSH_TAG)
 
 env:
 	LC_ALL=C virtualenv env
