@@ -15,7 +15,7 @@ required = $(if $($1),,$(error Required parameter missing: $1))
 checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 
-.PHONY: all build train run server shell base tmx2corpus eb clean
+.PHONY: all build train run server shell base corpus tmx2corpus eb clean
 
 all: build
 
@@ -38,17 +38,17 @@ $(work_dir)/binary/moses.ini: $(work_dir)/tune/mert-work/moses.ini
 	$(call checklangs)
 	$(work_run) /home/moses/work/bin/binarize.sh
 
-$(work_dir)/corpus-train/bitext.tok.*: tmx-train env/bin/tmx2corpus
-	$(call checklangs)
-	mkdir -p $(work_dir)/corpus-train
-	. env/bin/activate; cd $(work_dir)/corpus-train; \
-		tmx2corpus -v $(root_dir)/tmx-train
+corpus: corpus-train/bitext.tok.* corpus-tune/bitext.tok.*
 
-$(work_dir)/corpus-tune/bitext.tok.*: tmx-tune env/bin/tmx2corpus
+$(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
 	$(call checklangs)
-	mkdir -p $(work_dir)/corpus-tune
-	. env/bin/activate; cd $(work_dir)/corpus-tune; \
-		tmx2corpus -v $(root_dir)/tmx-tune
+	mkdir -p $(work_dir)/corpus-$*
+	cp corpus-$*/bitext.tok.* $(work_dir)/corpus-$*/
+
+corpus-%/bitext.tok.*: tmx-% env/bin/tmx2corpus
+	$(call checklangs)
+	mkdir -p corpus-$*
+	. env/bin/activate; cd corpus-$*; tmx2corpus -v $(root_dir)/tmx-$*
 
 run:
 	$(call checklangs)

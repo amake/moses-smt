@@ -1,5 +1,6 @@
 env
 tmx-*/**/*.tmx
+corpus-*
 *.zip
 work/*
 !work/bin
