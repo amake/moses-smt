@@ -73,12 +73,14 @@ shell:
 
 deploy.zip: $(work_dir)/binary/moses.ini
 	$(call checklangs)
-	if [ -f deploy.zip ]; then rm deploy.zip; fi
+	if [ -f $@ ]; then rm $@; fi
 	mv Dockerfile{,.orig}
-	sed -e "s+@DEFAULT_WORK_DIR@+$(work_dir)+" Dockerfile.orig > Dockerfile
-	zip -r deploy Dockerfile Dockerrun.aws.json $(work_dir) \
+	sed -e "s|@DEFAULT_WORK_DIR@|$(work_dir)|" Dockerfile.orig > Dockerfile
+	cp Dockerrun.aws{.noimage,}.json
+	zip -r $@ Dockerfile Dockerrun.aws.json $(work_dir)/{binary,lm} \
 		-x \*/.DS_Store
 	mv Dockerfile{.orig,}
+	mv Dockerrun.aws{,.noimage}.json
 
 env:
 	LC_ALL=C virtualenv env
