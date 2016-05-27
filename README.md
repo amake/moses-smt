@@ -41,7 +41,7 @@ care to minimize the size (but it's still pretty big).
 First, if using `docker-machine` you probably want to increase your default
 machine's RAM and CPU cores, for instance to 4 GB and max available cores.
 
-1. Put most of your TMXs in `train-tmx`, and the rest in `tune-tmx`.
+1. Put most of your TMXs in `tmx-train`, and the rest in `tmx-tune`.
 
 2. Run `make SOURCE_LANG=<src> TARGET_LANG=<trg> [LABEL=<lbl>]`.
 

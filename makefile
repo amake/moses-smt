@@ -38,17 +38,17 @@ $(work_dir)/binary/moses.ini: $(work_dir)/tune/mert-work/moses.ini
 	$(call checklangs)
 	$(work_run) /home/moses/work/bin/binarize.sh
 
-$(work_dir)/corpus-train/bitext.tok.*: train-tmx env/bin/tmx2corpus
+$(work_dir)/corpus-train/bitext.tok.*: tmx-train env/bin/tmx2corpus
 	$(call checklangs)
 	mkdir -p $(work_dir)/corpus-train
 	. env/bin/activate; cd $(work_dir)/corpus-train; \
-		tmx2corpus -v $(root_dir)/train-tmx
+		tmx2corpus -v $(root_dir)/tmx-train
 
-$(work_dir)/corpus-tune/bitext.tok.*: tune-tmx env/bin/tmx2corpus
+$(work_dir)/corpus-tune/bitext.tok.*: tmx-tune env/bin/tmx2corpus
 	$(call checklangs)
 	mkdir -p $(work_dir)/corpus-tune
 	. env/bin/activate; cd $(work_dir)/corpus-tune; \
-		tmx2corpus -v $(root_dir)/tune-tmx
+		tmx2corpus -v $(root_dir)/tmx-tune
 
 run:
 	$(call checklangs)

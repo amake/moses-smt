@@ -1,5 +1,5 @@
 env
-*-tmx/**/*.tmx
+tmx-*/**/*.tmx
 *.zip
 work/*
 !work/bin
