@@ -17,7 +17,7 @@ checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 
 .PHONY: all build train run server shell base corpus tmx2corpus eb clean deploy-hub \
-	push
+	deploy-hub-zip push
 
 all: build
 
@@ -88,6 +88,7 @@ push_tag_safe = $(subst /,_,$(subst :,_,$(subst \:,:,$(PUSH_TAG))))
 
 deploy-hub: push deploy-$(push_tag_safe).zip
 
+deploy-hub-zip: deploy-$(push_tag_safe).zip
 deploy-$(push_tag_safe).zip:
 	$(call checklangs)
 	if [ -f $@ ]; then rm $@; fi
