@@ -11,7 +11,7 @@ work_run = docker run --rm -it -v $(root_dir)/work:/home/moses/work \
 	-e TEST_MODE=$(TEST_MODE) \
 	amake/moses-smt:base
 
-required = $(if $($1),,$(error Required parameter missing: $1))
+required = $(if $($1), ,$(error Required parameter missing: $1))
 checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 
