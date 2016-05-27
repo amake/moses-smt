@@ -19,7 +19,7 @@ checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 all: build
 
-build: train
+build: $(work_dir)/binary/moses.ini
 	$(call checklangs)
 	tar -cf - Dockerfile $(work_dir) | docker build -t $(TAG) \
 		--build-arg work_dir=$(work_dir) -
