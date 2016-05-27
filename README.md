@@ -1,7 +1,7 @@
 # Dock You a Moses
 
-Want to play with the [Moses](http://www.statmt.org/moses/)
-Statistical Machine Translation system, but...
+Want to play with the [Moses](http://www.statmt.org/moses/) Statistical Machine
+Translation system, but...
 
 - You don't have time to get a PhD in Setting Up Moses?
 
@@ -11,17 +11,27 @@ Statistical Machine Translation system, but...
 Well now you don't have to, because I stuffed Moses in a Docker container for
 you.
 
-# Docker Image
+# What is this?
 
-The base Moses installation is built and hosted on [Docker
-Hub](https://hub.docker.com/r/amake/moses-base/). The base image alone
-is not useful; if you are reading this on Docker Hub, come on over to
-[GitHub](https://github.com/amake/moses-smt) to get started.
+- A full Moses + MGIZA installation in a Docker image: `amake/moses-smt:base` on
+[Docker Hub](https://hub.docker.com/r/amake/moses-smt/)
 
-All you need to know about the base image is that I have taken some
-care to minimize the size (but it's still pretty big).
+- A [`make`](https://www.gnu.org/software/make/)-based set of commands for
+  easily
 
-[![](https://imagelayers.io/badge/amake/moses-smt:base.svg)](https://imagelayers.io/?images=amake/moses-smt:base 'Get your own badge on imagelayers.io')
+  - Converting TMX files into Moses-ready corpus files: `make corpus`
+
+  - Training and tuning Moses: `make train`
+
+  - Building Docker images of trained Moses instances: `make build`
+
+  - Deploying trained Moses instances to Docker Hub/Amazon Elastic Beanstalk:
+    `make deploy-hub`
+
+- Some peripheral tools:
+
+  - A simple REPL for querying Moses over XML-RPC: `mosesxmlrpcrepl.py` or `make
+    repl`
 
 # Requirements
 
@@ -64,22 +74,11 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
 
 - Train a new image with swapped languages or with a new set of TMXs.
 
-- Push the image to Docker Hub, then throw that bad boy on Amazon
-  Elastic Beanstalk and use it for translation in
-  [OmegaT](https://github.com/amake/omegat-moses-mt). Sample
-  `Dockerrun.aws.json`:
+- Use a trained instance for translation in OmegaT with the [omegat-moses-mt
+  plugin](https://github.com/amake/omegat-moses-mt):
 
-```
-{
-  "AWSEBDockerrunVersion": "1",
-  "Image": {
-    "Name": "<username>/moses-smt:<lbl>-<src>-<trg>",
-    "Update": "true"
-  },
-  "Ports": [
-    {
-      "ContainerPort": "8080"
-    }
-  ]
-}
-```
+  - Run `make server` to run the server locally; the `moses.server.url` value is
+    then `http://$(docker-machine ip)/RPC2`
+
+  - Run `make deploy-hub` and then upload the .zip that's produced as a new EB
+    environment
