@@ -12,7 +12,7 @@ ${MOSES_HOME}/bin/processLexicalTableMin \
 	-out reordering-table
 
 sed -r -e 's/(PhraseDictionary)Memory/\1Compact/' \
-	-e "s+(path=).*phrase-table\.gz+\1${WORK_HOME}/binary/phrase-table.minphr+" \
-	-e "s+(path=).*reordering-table.*\.gz+\1${WORK_HOME}/binary/reordering-table+" \
+	-e "s|(path=).*phrase-table\.gz|\1${WORK_HOME}/binary/phrase-table.minphr|" \
+	-e "s|(path=).*reordering-table.*\.gz|\1${WORK_HOME}/binary/reordering-table|" \
 	< ${WORK_HOME}/tune/mert-work/moses.ini \
 	> moses.ini
