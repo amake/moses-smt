@@ -23,7 +23,7 @@ all: build
 
 build: $(work_dir)/binary/moses.ini
 	$(call checklangs)
-	tar -cf - Dockerfile $(work_dir) | docker build -t $(TAG) \
+	tar -cf - Dockerfile $(work_dir)/{lm,binary} | docker build -t $(TAG) \
 		--build-arg work_dir=$(work_dir) -
 
 train: $(work_dir)/binary/moses.ini
