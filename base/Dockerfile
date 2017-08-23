@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM alpine:3.1
 MAINTAINER aaron@madlon-kay.com
 
 ENV BIN_HOME=/opt/bin
@@ -6,18 +6,19 @@ ENV MOSES_HOME=$BIN_HOME/moses
 
 WORKDIR $MOSES_HOME
 
-ENV PACKAGES="build-essential \
-    git-core \
-    pkg-config \
+ENV PACKAGES="build-base \
+    git \
+    pkgconfig \
     automake \
+    autoconf \
     libtool \
     wget \
-    zlib1g-dev \
+    zlib-dev \
     python-dev \
-    libbz2-dev \
+    bzip2-dev \
     cmake"
 
-RUN apt-get update && apt-get install -q -y ${PACKAGES} python \
+RUN apk add ${PACKAGES} python \
     && git clone --depth 1 https://github.com/moses-smt/mosesdecoder.git \
     && cd mosesdecoder \
     && make -f contrib/Makefiles/install-dependencies.gmake PREFIX=/opt \
@@ -33,7 +34,6 @@ RUN apt-get update && apt-get install -q -y ${PACKAGES} python \
     && cp bin/* scripts/merge_alignment.py ${BIN_HOME}/tools \
     && cd - \
     && rm -rf mgiza \
-    && apt-get remove -q -y ${PACKAGES} \
-    && apt-get autoremove -q -y
+    && apk del ${PACKAGES}
 
 ENV LD_LIBRARY_PATH /opt/lib
