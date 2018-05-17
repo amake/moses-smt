@@ -2,6 +2,7 @@ PORT ?= 8080
 LABEL ?= myinstance
 TAG ?= moses-smt:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 PUSH_TAG ?= $(TAG)
+REPL_ARGS =
 
 root_dir = $(shell pwd)
 work_dir = work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
@@ -70,7 +71,7 @@ server:
 	docker run --rm -p $(PORT):8080 $(TAG)
 
 repl: env/bin/tmx2corpus
-	. env/bin/activate; ./mosesxmlrpcrepl.py
+	. env/bin/activate; ./mosesxmlrpcrepl.py $(REPL_ARGS)
 
 shell:
 	$(call checklangs)

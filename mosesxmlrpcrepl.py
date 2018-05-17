@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import argparse
+import logging
 import re
 import sys
 import xmlrpclib
@@ -31,13 +33,16 @@ class MosesRepl(XmlRpcRepl):
         self.ts = tinysegmenter.TinySegmenter()
 
     def evaluate(self, inpt):
-        return self.do_query(self.clean_input(inpt))
+        cleaned = self.clean_input(inpt)
+        logging.debug("Cleaned input: %s", cleaned)
+        return self.do_query(cleaned)
 
     def clean_input(self, text):
         return ' '.join(self.ts.tokenize(text))
 
     def do_query(self, query):
         response = self.server.translate({'text': query})
+        logging.debug("Raw response: %s", response)
         return self.clean_response(response['text'])
 
     def clean_response(self, text):
@@ -45,7 +50,17 @@ class MosesRepl(XmlRpcRepl):
 
 
 def main():
-    url = sys.argv[1] if len(sys.argv) > 1 else raw_input('URL: ')
+    parser = argparse.ArgumentParser(
+        description='Interactively query a Moses server')
+    parser.add_argument('--verbose', '-v', action='count', default=0)
+    parser.add_argument('url', nargs='?')
+    args = parser.parse_args()
+
+    levels = [logging.WARNING, logging.INFO, logging.DEBUG]
+    level = levels[min(len(levels) - 1, args.verbose)]
+    logging.basicConfig(level=level)
+
+    url = args.url or raw_input('URL: ')
     MosesRepl(url).go()
 
 
