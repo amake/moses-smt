@@ -9,8 +9,9 @@ import tinysegmenter
 
 
 class XmlRpcRepl(object):
-    def __init__(self, url):
+    def __init__(self, url, raw=False):
         self.url = url
+        self.raw = raw
         self.server = xmlrpclib.ServerProxy(url)
 
     def go(self):
@@ -33,17 +34,22 @@ class MosesRepl(XmlRpcRepl):
         self.ts = tinysegmenter.TinySegmenter()
 
     def evaluate(self, inpt):
-        cleaned = self.clean_input(inpt)
-        logging.debug("Cleaned input: %s", cleaned)
-        return self.do_query(cleaned)
+        query = inpt
+        if not self.raw:
+            query = self.clean_input(inpt)
+            logging.debug("Cleaned input: %s", query)
+        return self.do_query(query)
 
     def clean_input(self, text):
         return ' '.join(self.ts.tokenize(text))
 
     def do_query(self, query):
         response = self.server.translate({'text': query})
-        logging.debug("Raw response: %s", response)
-        return self.clean_response(response['text'])
+        response_text = response['text']
+        if not self.raw:
+            logging.debug("Raw response: %s", response)
+            response_text = self.clean_response(response_text)
+        return response_text
 
     def clean_response(self, text):
         return re.sub(ur'(?<=[\u3001-\u9fa0])\s+(?=[\u3001-\u9fa0])', '', text)
@@ -53,6 +59,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Interactively query a Moses server')
     parser.add_argument('--verbose', '-v', action='count', default=0)
+    parser.add_argument('--raw', action='store_true')
     parser.add_argument('url', nargs='?')
     args = parser.parse_args()
 
@@ -61,7 +68,7 @@ def main():
     logging.basicConfig(level=level)
 
     url = args.url or raw_input('URL: ')
-    MosesRepl(url).go()
+    MosesRepl(url, raw=args.raw).go()
 
 
 if __name__ == '__main__':
