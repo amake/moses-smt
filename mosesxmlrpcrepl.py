@@ -4,11 +4,27 @@ import argparse
 import logging
 import re
 import sys
-import xmlrpclib
 import tinysegmenter
-from HTMLParser import HTMLParser
 
-html_parser = HTMLParser()
+try:
+    import xmlrpclib
+except ModuleNotFoundError:
+    import xmlrpc.client as xmlrpclib
+
+try:
+    from HTMLParser import HTMLParser
+    unescape = HTMLParser().unescape
+except ModuleNotFoundError:
+    import html
+    unescape = html.unescape
+
+try:
+    input = raw_input
+except NameError:
+    pass
+
+cjk_spaces = re.compile(
+    br'(?<=[\u3001-\u9fa0])\s+(?=[\u3001-\u9fa0])'.decode('raw_unicode_escape'))
 
 
 class XmlRpcRepl(object):
@@ -26,7 +42,10 @@ class XmlRpcRepl(object):
             print('Exiting')
 
     def read(self):
-        return raw_input('Query: ').decode('utf-8')
+        try:
+            return raw_input('Query: ').decode('utf-8')
+        except NameError:
+            return input('Query: ')
 
     def evaluate(self, inpt):
         raise NotImplementedError
@@ -40,7 +59,7 @@ class MosesRepl(XmlRpcRepl):
     def evaluate(self, inpt):
         query = inpt
         if not self.raw:
-            query = query.decode('string_escape')
+            query = query.encode('utf-8').decode('unicode_escape')
             if self.clean:
                 query = self.clean_input(inpt)
                 logging.debug("Cleaned input: %s", query)
@@ -53,14 +72,14 @@ class MosesRepl(XmlRpcRepl):
         response = self.server.translate({'text': query})
         response_text = response['text']
         if not self.raw:
-            response_text = html_parser.unescape(response_text)
+            response_text = unescape(response_text)
             if self.clean:
                 logging.debug("Raw response: %s", response_text)
                 response_text = self.clean_response(response_text)
         return response_text
 
     def clean_response(self, text):
-        return re.sub(ur'(?<=[\u3001-\u9fa0])\s+(?=[\u3001-\u9fa0])', '', text)
+        return cjk_spaces.sub('', text)
 
 
 def main():
@@ -76,7 +95,7 @@ def main():
     level = levels[min(len(levels) - 1, args.verbose)]
     logging.basicConfig(level=level)
 
-    url = args.url or raw_input('URL: ')
+    url = args.url or input('URL: ')
     MosesRepl(url, raw=args.raw, clean=args.clean).go()
 
 
