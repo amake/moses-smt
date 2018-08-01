@@ -56,10 +56,10 @@ $(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
 	mkdir -p $(work_dir)/corpus-$*
 	cp corpus-$*/bitext.tok.* $(work_dir)/corpus-$*/
 
-corpus-%/bitext.tok.*: env/bin/tmx2corpus
+corpus-%/bitext.tok.*: | .env/bin/tmx2corpus
 	$(call checklangs)
 	mkdir -p corpus-$*
-	. env/bin/activate; cd corpus-$*; tmx2corpus -v $(root_dir)/tmx-$*
+	cd corpus-$*; .env/bin/tmx2corpus -v $(root_dir)/tmx-$*
 
 run:
 	$(call checklangs)
@@ -70,8 +70,8 @@ server:
 	$(call checklangs)
 	docker run --rm -p $(PORT):8080 $(TAG)
 
-repl: env/bin/tmx2corpus
-	. env/bin/activate; ./mosesxmlrpcrepl.py $(REPL_ARGS)
+repl: | .env
+	.env/bin/python ./mosesxmlrpcrepl.py $(REPL_ARGS)
 
 shell:
 	$(call checklangs)
@@ -105,23 +105,22 @@ push:
 	docker tag $(TAG) $(PUSH_TAG)
 	docker push $(PUSH_TAG)
 
-env:
-	LC_ALL=C virtualenv env
+.env:
+	virtualenv .env
+	.env/bin/pip install tinysegmenter
 
-tmx2corpus: env
-	env/bin/pip install -U git+https://github.com/amake/tmx2corpus.git
+tmx2corpus: .env/bin/tmx2corpus
 
-env/bin/tmx2corpus: env
-	env/bin/pip install git+https://github.com/amake/tmx2corpus.git
+.env/bin/tmx2corpus: | .env
+	.env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
-eb: env
-	env/bin/pip install -U awsebcli
+eb: .env/bin/eb
 
-env/bin/eb: env
-	env/bin/pip install awsebcli
+.env/bin/eb: | .env
+	.env/bin/pip install awsebcli
 
 base:
 	cd base; docker build -t moses-smt:base .
 
 clean:
-	rm -rf $(work_dir) env
+	rm -rf $(work_dir) .env

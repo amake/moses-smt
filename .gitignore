@@ -1,4 +1,4 @@
-env
+.env
 tmx-*/**/*.tmx
 corpus-*
 *.zip
