@@ -4,9 +4,8 @@ TAG ?= moses-smt:$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 PUSH_TAG ?= $(TAG)
 REPL_ARGS =
 
-root_dir = $(shell pwd)
 work_dir = work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
-work_run = docker run --rm -it -v $(root_dir)/work:/home/moses/work \
+work_run = docker run --rm -it -v $(PWD)/work:/home/moses/work \
 	-e WORK_HOME=/home/moses/$(work_dir) \
 	-e SOURCE_LANG=$(SOURCE_LANG) \
 	-e TARGET_LANG=$(TARGET_LANG) \
@@ -59,7 +58,7 @@ $(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
 corpus-%/bitext.tok.*: | .env/bin/tmx2corpus
 	$(call checklangs)
 	mkdir -p corpus-$*
-	cd corpus-$*; .env/bin/tmx2corpus -v $(root_dir)/tmx-$*
+	cd corpus-$*; .env/bin/tmx2corpus -v $(PWD)/tmx-$*
 
 .PHONY: run
 run:
