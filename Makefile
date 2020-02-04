@@ -84,11 +84,10 @@ shell:
 deploy.zip: $(work_dir)/binary/moses.ini
 	$(call checklangs)
 	if [ -f $@ ]; then rm $@; fi
-	mv Dockerfile{,.orig}
-	sed -e "s|@DEFAULT_WORK_DIR@|$(work_dir)|" Dockerfile.orig > Dockerfile
+	sed -i '.orig' "s|@DEFAULT_WORK_DIR@|$(work_dir)|" Dockerfile
 	cp Dockerrun.aws{.noimage,}.json
 	zip -r $@ Dockerfile Dockerrun.aws.json $(work_dir)/{binary,lm} \
-		-x \*/.DS_Store
+		-x '*/.DS_Store'
 	mv Dockerfile{.orig,}
 	mv Dockerrun.aws{,.noimage}.json
 
