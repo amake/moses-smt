@@ -27,12 +27,15 @@ build: $(work_dir)/binary/moses.ini
 .PHONY: train
 train: $(work_dir)/binary/moses.ini
 
-$(work_dir)/train/model/moses.ini: $(work_dir)/corpus-train/bitext.tok.*
+langs := $(SOURCE_LANG) $(TARGET_LANG)
+train_bifiles := $(addprefix $(work_dir)/corpus-train/bitext.tok.,$(langs))
+tune_bifiles := $(addprefix $(work_dir)/corpus-tune/bitext.tok.,$(langs))
+
+$(work_dir)/train/model/moses.ini: $(train_bifiles)
 	$(call checklangs)
 	$(work_run) /home/moses/work/bin/train.sh
 
-$(work_dir)/tune/mert-work/moses.ini: $(work_dir)/corpus-tune/bitext.tok.* \
-		$(work_dir)/train/model/moses.ini
+$(work_dir)/tune/mert-work/moses.ini: $(tune_bifiles) $(work_dir)/train/model/moses.ini
 	$(call checklangs)
 	$(work_run) /home/moses/work/bin/tune.sh
 
@@ -48,17 +51,17 @@ shrink:
 	rm -rf $(work_dir)/tune/{!(mert-work),mert-work/!(moses.ini)}
 
 .PHONY: corpus
-corpus: corpus-train/bitext.tok.* corpus-tune/bitext.tok.*
+corpus: $(train_bifiles) $(tune_bifiles)
 
-$(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
+$(train_bifiles): | .env/bin/tmx2corpus
 	$(call checklangs)
-	mkdir -p $(work_dir)/corpus-$*
-	cp corpus-$*/bitext.tok.* $(work_dir)/corpus-$*/
+	mkdir -p $(@D)
+	cd $(@D); $(PWD)/.env/bin/tmx2corpus -v $(PWD)/tmx-train
 
-corpus-%/bitext.tok.*: | .env/bin/tmx2corpus
+$(tune_bifiles): | .env/bin/tmx2corpus
 	$(call checklangs)
-	mkdir -p corpus-$*
-	cd corpus-$*; .env/bin/tmx2corpus -v $(PWD)/tmx-$*
+	mkdir -p $(@D)
+	cd $(@D); $(PWD)/.env/bin/tmx2corpus -v $(PWD)/tmx-tune
 
 .PHONY: run
 run:
