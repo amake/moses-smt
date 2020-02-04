@@ -16,17 +16,16 @@ work_run = docker run --rm -it -v $(root_dir)/work:/home/moses/work \
 required = $(if $($1), ,$(error Required parameter missing: $1))
 checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
-
-.PHONY: all build train run server shell base corpus tmx2corpus eb clean deploy-hub \
-	deploy-hub-zip push repl
-
+.PHONY: all
 all: build
 
+.PHONY: build
 build: $(work_dir)/binary/moses.ini
 	$(call checklangs)
 	tar -cf - Dockerfile $(work_dir)/{lm,binary} | docker build -t $(TAG) \
 		--build-arg work_dir=$(work_dir) -
 
+.PHONY: train
 train: $(work_dir)/binary/moses.ini
 
 $(work_dir)/train/model/moses.ini: $(work_dir)/corpus-train/bitext.tok.*
@@ -49,6 +48,7 @@ shrink:
 	rm -rf $(work_dir)/train/{!(model),model/!(moses.ini)}
 	rm -rf $(work_dir)/tune/{!(mert-work),mert-work/!(moses.ini)}
 
+.PHONY: corpus
 corpus: corpus-train/bitext.tok.* corpus-tune/bitext.tok.*
 
 $(work_dir)/corpus-%/bitext.tok.*: corpus-%/bitext.tok.*
@@ -61,18 +61,22 @@ corpus-%/bitext.tok.*: | .env/bin/tmx2corpus
 	mkdir -p corpus-$*
 	cd corpus-$*; .env/bin/tmx2corpus -v $(root_dir)/tmx-$*
 
+.PHONY: run
 run:
 	$(call checklangs)
 	docker run --rm $(TAG) /bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 
+.PHONY: server
 server:
 	$(call checklangs)
 	docker run --rm -p $(PORT):8080 $(TAG)
 
+.PHONY: repl
 repl: | .env
 	.env/bin/python ./mosesxmlrpcrepl.py $(REPL_ARGS)
 
+.PHONY: shell
 shell:
 	$(call checklangs)
 	docker run --rm -ti $(TAG) /bin/bash
@@ -90,8 +94,10 @@ deploy.zip: $(work_dir)/binary/moses.ini
 
 push_tag_safe = $(subst /,_,$(subst :,_,$(subst \:,:,$(PUSH_TAG))))
 
+.PHONY: deploy-hub
 deploy-hub: push deploy-$(push_tag_safe).zip
 
+.PHONY: deploy-hub-zip
 deploy-hub-zip: deploy-$(push_tag_safe).zip
 deploy-$(push_tag_safe).zip:
 	$(call checklangs)
@@ -100,6 +106,7 @@ deploy-$(push_tag_safe).zip:
 	zip $@ Dockerrun.aws.json
 	rm Dockerrun.aws.json
 
+.PHONY: push
 push:
 	$(call checklangs)
 	docker tag $(TAG) $(PUSH_TAG)
@@ -109,18 +116,22 @@ push:
 	virtualenv .env
 	.env/bin/pip install tinysegmenter
 
+.PHONY: tmx2corpus
 tmx2corpus: .env/bin/tmx2corpus
 
 .env/bin/tmx2corpus: | .env
 	.env/bin/pip install git+https://github.com/amake/tmx2corpus.git
 
+.PHONY: eb
 eb: .env/bin/eb
 
 .env/bin/eb: | .env
 	.env/bin/pip install awsebcli
 
+.PHONY: base
 base:
 	cd base; docker build -t moses-smt:base .
 
+.PHONY: clean
 clean:
 	rm -rf $(work_dir) .env
