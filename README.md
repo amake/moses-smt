@@ -35,11 +35,11 @@ you.
 
 # Requirements
 
-- GNU make
+- make
 
 - Docker
 
-- Python 2.7 with pip and virtualenv
+- Python 3 with pip and virtualenv
 
 - OS X? (not tested elsewhere)
 
@@ -48,8 +48,9 @@ you.
 
 # Usage
 
-First, if using `docker-machine` you probably want to increase your default
-machine's RAM and CPU cores, for instance to 4 GB and max available cores.
+First, if trying to build the base image, you might need to re-balance the
+number of cores vs memory available to Docker: e.g. 8 cores but only 2 GB of
+memory results in compilation failures. 4 cores with 4 GB seems to work better.
 
 1. Put most of your TMXs in `tmx-train`, and the rest in `tmx-tune`.
 
@@ -78,7 +79,7 @@ machine's RAM and CPU cores, for instance to 4 GB and max available cores.
   plugin](https://github.com/amake/omegat-moses-mt):
 
   - Run `make server` to run the server locally; the `moses.server.url` value is
-    then `http://$(docker-machine ip):8080/RPC2`
+    then `http://localhost:8080/RPC2`
 
   - Run `make deploy-hub` and then upload the .zip that's produced as a new EB
     environment
