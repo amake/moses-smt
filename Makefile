@@ -16,15 +16,18 @@ required = $(if $($1), ,$(error Required parameter missing: $1))
 checklangs = $(and $(call required,SOURCE_LANG),$(call required,TARGET_LANG))
 
 .PHONY: all
+all: ## Default tasks: build
 all: build
 
 .PHONY: build
+build: ## Build a trained instance
 build: $(work_dir)/binary/moses.ini
 	$(call checklangs)
 	tar -cf - Dockerfile $(work_dir)/{lm,binary} | docker build -t $(TAG) \
 		--build-arg work_dir=$(work_dir) -
 
 .PHONY: train
+train: ## Train Moses on the provided data
 train: $(work_dir)/binary/moses.ini
 
 langs := $(SOURCE_LANG) $(TARGET_LANG)
@@ -43,6 +46,8 @@ $(work_dir)/binary/moses.ini: $(work_dir)/tune/mert-work/moses.ini
 	$(call checklangs)
 	$(work_run) /home/moses/work/bin/binarize.sh
 
+.PHONY: shrink
+shrink: ## Remove training inputs to save disk space
 shrink: SHELL = /bin/bash -O extglob
 shrink:
 	$(call checklangs)
@@ -51,6 +56,7 @@ shrink:
 	rm -rf $(work_dir)/tune/{!(mert-work),mert-work/!(moses.ini)}
 
 .PHONY: corpus
+corpus: ## Create corpus from TMX files in ./tmx-{train,tune}
 corpus: $(train_bifiles) $(tune_bifiles)
 
 $(train_bifiles): | .env/bin/tmx2corpus
@@ -64,21 +70,25 @@ $(tune_bifiles): | .env/bin/tmx2corpus
 	cd $(@D); $(PWD)/.env/bin/tmx2corpus -v $(PWD)/tmx-tune
 
 .PHONY: run
+run: ## Test translate "foo" in trained instance
 run:
 	$(call checklangs)
 	docker run --rm $(TAG) /bin/sh -c 'echo foo |\
 		$$MOSES_HOME/bin/moses -f $$WORK_HOME/binary/moses.ini'
 
 .PHONY: server
+server: ## Launch a trained instance
 server:
 	$(call checklangs)
 	docker run --rm -p $(PORT):8080 $(TAG)
 
 .PHONY: repl
+repl: ## Open a REPL to query a trained instance (launch with `make server`)
 repl: | .env
 	.env/bin/python ./mosesxmlrpcrepl.py $(REPL_ARGS)
 
 .PHONY: shell
+shell: ## Open a shell on a trained instance
 shell:
 	$(call checklangs)
 	docker run --rm -ti $(TAG) /bin/bash
@@ -108,6 +118,7 @@ deploy-$(push_tag_safe).zip:
 	rm Dockerrun.aws.json
 
 .PHONY: push
+push: ## Push trained container to Docker Hub
 push:
 	$(call checklangs)
 	docker tag $(TAG) $(PUSH_TAG)
@@ -130,9 +141,19 @@ eb: .env/bin/eb
 	.env/bin/pip install awsebcli
 
 .PHONY: base
+base: ## Build the base Moses container
 base:
 	cd base; docker build -t moses-smt:base .
 
 .PHONY: clean
+clean: ## Remove generated files
 clean:
 	rm -rf $(work_dir) .env
+
+.PHONY: help
+help: ## Show this help text
+	$(info usage: make [target])
+	$(info )
+	$(info Available targets:)
+	@awk -F ':.*?## *' '/^[^\t].+?:.*?##/ \
+         {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
