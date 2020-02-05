@@ -1,0 +1,63 @@
+# -*- mode: makefile; -*-
+
+SOURCE_LANG := en
+TARGET_LANG := en_piglatin
+LABEL := test
+
+.PHONY: all
+all: ## Default target: build
+all: build
+
+.PHONY: build
+build: ## Build trained instance
+build: assets
+	$(MAKE) build SOURCE_LANG=$(SOURCE_LANG) TARGET_LANG=$(TARGET_LANG) LABEL=$(LABEL)
+
+langs := $(SOURCE_LANG) $(TARGET_LANG)
+work_dir := work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
+
+train_dir := $(work_dir)/corpus-train
+tune_dir := $(work_dir)/corpus-tune
+
+train_asset_base := $(train_dir)/bitext.$(SOURCE_LANG)
+tune_asset_base := $(tune_dir)/bitext.$(SOURCE_LANG)
+assets_base := $(train_asset_base) $(tune_asset_base)
+assets := $(assets_base:.$(SOURCE_LANG)=.tok.$(SOURCE_LANG)) \
+	$(assets_base:.$(SOURCE_LANG)=.tok.$(TARGET_LANG))
+
+define curl_one
+	curl "$1" | tar xz --strip-components 1 --include "*/$2"
+	mkdir -p $(@D)
+	mv $2 $@
+endef
+
+.PHONY: assets
+assets: ## Prepare assets for training
+assets: $(assets)
+	$(info $(^))
+
+$(train_asset_base):
+	$(call curl_one,http://www.statmt.org/wmt13/training-parallel-nc-v8.tgz,news-commentary-v8.fr-en.en)
+
+$(tune_asset_base):
+	$(call curl_one,http://www.statmt.org/wmt12/dev.tgz,news-test2008.en)
+
+moses_run := docker run -i --rm amake/moses-smt:base
+
+bitext.tok.%: bitext.%
+	$(moses_run) scripts/tokenizer/tokenizer.perl -l $(*F) <$< >$@
+
+%/bitext.en_piglatin: %/bitext.en | .env/bin/pyglatin
+	.env/bin/pyglatin <$< >$@
+
+.env/bin/pyglatin:
+	$(MAKE) .env
+	.env/bin/pip install git+https://github.com/amake/pyglatin.git
+
+.PHONY: help
+help: ## Show this help text
+	$(info usage: make [target])
+	$(info )
+	$(info Available targets:)
+	@awk -F ':.*?## *' '/^[^\t].+?:.*?##/ \
+         {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
