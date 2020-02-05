@@ -94,7 +94,11 @@ def main():
     level = levels[min(len(levels) - 1, args.verbose)]
     logging.basicConfig(level=level)
 
-    url = args.url or input('URL: ')
+    try:
+        url = args.url or input('URL: ')
+    except (KeyboardInterrupt, EOFError):
+        return
+
     MosesRepl(url, raw=args.raw, clean=args.clean).go()
 
 
