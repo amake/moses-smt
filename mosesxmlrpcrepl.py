@@ -3,7 +3,6 @@
 import argparse
 import logging
 import re
-import sys
 import tinysegmenter
 
 try:
