@@ -38,8 +38,8 @@ class XmlRpcRepl(object):
         try:
             while True:
                 print(self.evaluate(self.read()))
-        except KeyboardInterrupt:
-            print('Exiting')
+        except (KeyboardInterrupt, EOFError):
+            pass
 
     def read(self):
         try:
