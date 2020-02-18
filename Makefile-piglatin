@@ -19,11 +19,11 @@ work_dir := work/$(LABEL)-$(SOURCE_LANG)-$(TARGET_LANG)
 train_dir := $(work_dir)/corpus-train
 tune_dir := $(work_dir)/corpus-tune
 
-train_asset_base := $(train_dir)/bitext.$(SOURCE_LANG)
-tune_asset_base := $(tune_dir)/bitext.$(SOURCE_LANG)
+train_asset_base := $(train_dir)/bitext.en
+tune_asset_base := $(tune_dir)/bitext.en
 assets_base := $(train_asset_base) $(tune_asset_base)
-assets := $(assets_base:.$(SOURCE_LANG)=.tok.$(SOURCE_LANG)) \
-	$(assets_base:.$(SOURCE_LANG)=.tok.$(TARGET_LANG))
+assets := $(assets_base:.en=.tok.$(SOURCE_LANG)) \
+	$(assets_base:.en=.tok.$(TARGET_LANG))
 
 define curl_one
 	curl "$1" | tar xz --strip-components 1 --include "*/$2"
